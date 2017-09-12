@@ -1,5 +1,6 @@
 #include "notificator.h"
 
+#include <QApplication>
 #include <QMetaType>
 #include <QVariant>
 #include <QIcon>

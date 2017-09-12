@@ -49,6 +49,9 @@ public:
         QVariant value = index.data(Qt::ForegroundRole);
         QColor foreground = option.palette.color(QPalette::Text);
         if(qVariantCanConvert<QColor>(value))
+#else
+        if (value.canConvert(QMetaType::QColor))
+#endif
         {
             foreground = qvariant_cast<QColor>(value);
         }

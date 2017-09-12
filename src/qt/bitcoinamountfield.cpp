@@ -4,6 +4,7 @@
 
 #include "guiconstants.h"
 
+#include <QApplication>
 #include <QLabel>
 #include <QLineEdit>
 #include <QRegExpValidator>
@@ -11,7 +12,6 @@
 #include <QKeyEvent>
 #include <QDoubleSpinBox>
 #include <QComboBox>
-#include <QApplication>
 #include <qmath.h>
 
 BitcoinAmountField::BitcoinAmountField(QWidget *parent):

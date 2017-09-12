@@ -210,9 +210,11 @@ public:
     {
         // -- wallet is unlocked, can get at the private keys now
         refreshMessageTable();
-        
+
+#if QT_VERSION < 0x050000
         parent->reset(); // reload table view
-        
+#endif
+
         if (parent->proxyModel)
         {
             parent->proxyModel->setFilterRole(false);
@@ -232,7 +234,9 @@ public:
             // -- Wallet is locked, clear secure message display.
             cachedMessageTable.clear();
 
+#if QT_VERSION < 0x050000
             parent->reset(); // reload table view
+#endif
         };
     };
 
