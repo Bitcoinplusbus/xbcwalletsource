@@ -1005,12 +1005,11 @@ bool AppInit2()
      // Add wallet transactions that aren't already in a block to mapTransactions
     pwalletMain->ReacceptWalletTransactions();
 
-#if !defined(QT_GUI)
     // Loop until process is exit()ed from shutdown() function,
     // called from ThreadRPCServer thread when a "stop" command is received.
-    while (1)
-        MilliSleep(5000);
-#endif
+    if (!fHaveGUI)
+        while (1)
+            MilliSleep(5000);
 
     return true;
 }
