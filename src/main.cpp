@@ -53,7 +53,7 @@ unsigned int nStakeMaxAge = -1;           //unlimited
 unsigned int nModifierInterval = 10 * 60; // time to elapse before new modifier is computed
 static const int64_t nTargetTimespan_legacy = nTargetSpacing * nRetarget;
 static const int64_t nInterval = nTargetTimespan_legacy / nTargetSpacing;
-
+bool fHaveGUI = false;
 static const int64_t nTargetTimespan = 16 * 60;
 
 int64_t devCoin = 0 * COIN;
