@@ -14,7 +14,9 @@
 #include "init.h"
 #include "util.h"
 #include "ui_interface.h"
+#ifdef USE_TOR
 #include "tor/anonymize.h"
+#endif
 #include "checkpoints.h"
 #include "smessage.h"
 #include "pow_control.h"
@@ -600,18 +602,18 @@ bool AppInit2()
     }
 
     // ********************************************************* Step 6: network initialization
-
+#ifdef USE_TOR
     uiInterface.InitMessage(_("Initialising Tor Network..."));
-    printf("Initialising Tor Network...\n");
-
+#endif
     int nSocksVersion = GetArg("-socks", 5);
 
     if (nSocksVersion != 4 && nSocksVersion != 5)
         return InitError(strprintf(_("Unknown -socks proxy version requested: %i"), nSocksVersion));
 
-    int isfTor = GetArg("-torproxy", 1);
+#ifdef USE_TOR
+    bool isfTor = GetArg("-torproxy", false);
 
-    if (isfTor == 1)
+    if (isfTor)
     {
         std::set<enum Network> nets;
         nets.insert(NET_TOR);
@@ -622,6 +624,7 @@ bool AppInit2()
                 SetLimited(net);
         }
     }
+#endif
 
     if (mapArgs.count("-onlynet")) {
         std::set<enum Network> nets;
@@ -678,16 +681,19 @@ bool AppInit2()
         addrOnion = CService("127.0.0.1", onion_port);
     }
 
-    if (true) {
-        SetProxy(NET_TOR, addrOnion, 5);
-        SetReachable(NET_TOR);
-    }
+#ifdef USE_TOR
+    SetProxy(NET_TOR, addrOnion, 5);
+    SetReachable(NET_TOR);
+#endif
 
     // see Step 2: parameter interactions for more information about these
     fNoListen = !GetBoolArg("-listen", true);
     fDiscover = GetBoolArg("-discover", true);
     fNameLookup = GetBoolArg("-dns", true);
-    fTorEnabled = GetArg("-torproxy", 1);
+#ifdef USE_TOR
+    // Defaults to false, cannot be checked if USE_TOR also false
+    fTorEnabled = GetArg("-torproxy", false);
+#endif
 #ifdef USE_UPNP
     fUseUPnP = GetBoolArg("-upnp", USE_UPNP);
 #endif
@@ -713,8 +719,8 @@ bool AppInit2()
             if (!IsLimited(NET_IPV4))
                 fBound |= Bind(CService(inaddr_any, GetListenPort()), !fBound);
             }
-
-            if (isfTor == 1)
+#ifdef USE_TOR
+            if (isfTor)
             {
                 CService addrBind;
 
@@ -723,12 +729,12 @@ bool AppInit2()
 
                 fBound |= Bind(addrBind);
             }
-
+#endif
         if (!fBound)
             return InitError(_("Failed to listen on any port. Use -listen=0 if you want this."));
     }
-
-    if (isfTor == 1)
+#ifdef USE_TOR
+    if (isfTor)
     {
         if (!NewThread(StartTor, NULL))
                 InitError(_("Error: could not start tor node"));
@@ -736,7 +742,7 @@ bool AppInit2()
         uiInterface.InitMessage(_("Initialising Tor Network..."));
         printf("Initialising Tor Network...\n");
     }
-
+#endif
 
 
     if (mapArgs.count("-externalip"))
@@ -748,8 +754,8 @@ bool AppInit2()
             AddLocal(CService(strAddr, GetListenPort(), fNameLookup), LOCAL_MANUAL);
         }
     }
-
-    if (isfTor == 1)
+#ifdef USE_TOR
+    if (isfTor)
     {
         string automatic_onion;
         filesystem::path const hostname_path = GetDefaultDataDir() / "onion" / "hostname";
@@ -762,7 +768,7 @@ bool AppInit2()
         file >> automatic_onion;
         AddLocal(CService(automatic_onion, GetListenPort(), fNameLookup), LOCAL_MANUAL);
     }
-
+#endif
     if (mapArgs.count("-reservebalance")) // bitcoinplus: reserve balance amount
     {
         if (!ParseMoney(mapArgs["-reservebalance"], nReserveBalance))

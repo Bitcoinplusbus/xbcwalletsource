@@ -32,9 +32,11 @@
 using namespace std;
 using namespace boost;
 
+#ifdef USE_TOR
 extern "C" {
     int tor_main(int argc, char *argv[]);
 }
+#endif
 
 static const int MAX_OUTBOUND_CONNECTIONS = 16;
 
@@ -46,8 +48,10 @@ void ThreadOpenAddedConnections2(void* parg);
 void ThreadMapPort2(void* parg);
 #endif
 void ThreadDNSAddressSeed2(void* parg);
+#ifdef USE_TOR
 void ThreadTorNet2(void* parg);
 void ThreadOnionSeed2(void* parg);
+#endif
 bool OpenNetworkConnection(const CAddress& addrConnect, CSemaphoreGrant *grantOutbound = NULL, const char *strDest = NULL, bool fOneShot = false);
 
 
@@ -62,7 +66,7 @@ struct LocalServiceInfo {
 bool fClient = false;
 bool fDiscover = true;
 bool fUseUPnP = false;
-int fTorEnabled = 1;
+int fTorEnabled = false;
 uint64_t nLocalServices = (fClient ? 0 : NODE_NETWORK);
 static CCriticalSection cs_mapLocalHost;
 static map<CNetAddr, LocalServiceInfo> mapLocalHost;
@@ -642,7 +646,7 @@ void CNode::copyStats(CNodeStats &stats)
 
 
 
-
+#ifdef USE_TOR
 void ThreadTorNet(void* parg)
 {
     // Make this thread recognisable as the connection opening thread
@@ -677,6 +681,7 @@ void ThreadTorNet2(void* parg) {
 
     tor_main(4, argv);
 }
+#endif
 
 void ThreadSocketHandler(void* parg)
 {
@@ -1267,6 +1272,7 @@ void ThreadDNSAddressSeed2(void* parg)
     printf("%d addresses found from DNS seeds\n", found);
 }
 
+#ifdef USE_TOR
 void ThreadOnionSeed(void* parg)
 {
     // Make this thread recognisable as the DNS seeding thread
@@ -1311,7 +1317,7 @@ void ThreadOnionSeed2(void* parg)
 
     printf("%d addresses found from .onion seeds\n", found);
 }
-
+#endif
 
 
 
@@ -1925,11 +1931,13 @@ void static Discover()
         NewThread(ThreadGetMyExternalIP, NULL);
 }
 
+#ifdef USE_TOR
 void StartTor(void* parg)
 {
     if (!NewThread(ThreadTorNet, NULL))
         printf("Error: NewThread(ThreadTorNet) failed\n");
 }
+#endif
 
 void StartNode(void* parg)
 {
@@ -1957,13 +1965,13 @@ void StartNode(void* parg)
         if (!NewThread(ThreadDNSAddressSeed, NULL))
             printf("Error: NewThread(ThreadDNSAddressSeed) failed\n");
 
-//    int isfTor = GetArg("-torproxy", 1);
-	
-    if ((fTorEnabled == 0))
+#ifdef USE_TOR
+    if (!fTorEnabled)
         	printf(".onion seeding disabled\n");
     else
         if (!NewThread(ThreadOnionSeed, NULL))
             printf("Error: NewThread(ThreadOnionSeed) failed\n");
+#endif
 
     // Map ports with UPnP
     if (fUseUPnP)
@@ -2027,7 +2035,9 @@ bool StopNode()
     if (vnThreadsRunning[THREAD_UPNP] > 0) printf("ThreadMapPort still running\n");
 #endif
     if (vnThreadsRunning[THREAD_DNSSEED] > 0) printf("ThreadDNSAddressSeed still running\n");
+#ifdef USE_TOR
     if (vnThreadsRunning[THREAD_ONIONSEED] > 0) printf("ThreadOnionSeed still running\n");
+#endif
     if (vnThreadsRunning[THREAD_ADDEDCONNECTIONS] > 0) printf("ThreadOpenAddedConnections still running\n");
     if (vnThreadsRunning[THREAD_DUMPADDRESS] > 0) printf("ThreadDumpAddresses still running\n");
     if (vnThreadsRunning[THREAD_STAKE_MINER] > 0) printf("ThreadStakeMiner still running\n");

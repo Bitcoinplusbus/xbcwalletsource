@@ -499,7 +499,7 @@ void CDBEnv::Flush(bool fShutdown)
 
 CAddrDB::CAddrDB()
 {
-    if (fTorEnabled == 1) {
+    if (!fTorEnabled) {
         pathAddr = GetDataDir() / "peers.dat";
     } else {
         pathAddr = GetDataDir() / "onion_peers.dat";

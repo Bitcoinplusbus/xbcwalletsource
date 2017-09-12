@@ -1,5 +1,9 @@
 #include "rpcconsole.h"
+#ifdef USE_TOR
+#include "ui_rpcconsoletor.h"
+#else
 #include "ui_rpcconsole.h"
+#endif
 
 #include "clientmodel.h"
 #include "bitcoinrpc.h"
@@ -51,7 +55,11 @@ signals:
     void reply(int category, const QString &command);
 };
 
+#ifdef USE_TOR
+#include "rpcconsoletor.moc"
+#else
 #include "rpcconsole.moc"
+#endif
 
 void RPCExecutor::start()
 {
@@ -199,7 +207,9 @@ RPCConsole::RPCConsole(QWidget *parent) :
 
 #ifndef Q_OS_MAC
     ui->openDebugLogfileButton->setIcon(QIcon(":/icons/export"));
+#ifdef USE_TOR
     ui->openTorLogfileButton->setIcon(QIcon(":/icons/export"));
+#endif
     ui->showCLOptionsButton->setIcon(QIcon(":/icons/options"));
 #endif
 
@@ -219,12 +229,13 @@ RPCConsole::RPCConsole(QWidget *parent) :
 
     clear();
 
-    int isfTor = GetArg("-torproxy", 1);
-    if (isfTor == 1) {
+#ifdef USE_TOR
+    bool isfTor = GetArg("-torproxy", false);
+    if (isfTor) {
         ui->isTorProxy->setChecked(true);
         ui->isTorProxy->setText("P2P via native Tor proxy");
     }
-
+#endif
 
 }
 
@@ -441,10 +452,12 @@ void RPCConsole::on_openDebugLogfileButton_clicked()
     GUIUtil::openDebugLogfile();
 }
 
+#ifdef USE_TOR
 void RPCConsole::on_openTorLogfileButton_clicked()
 {
     GUIUtil::openTorLogfile();
 }
+#endif
 
 void RPCConsole::scrollToEnd()
 {

@@ -269,6 +269,7 @@ void openDebugLogfile()
         QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString(pathDebug.string())));
 }
 
+#ifdef USE_TOR
 void openTorLogfile()
 {
     boost::filesystem::path pathDebug = GetDataDir() / "tor/tor.log";
@@ -277,6 +278,7 @@ void openTorLogfile()
     if (boost::filesystem::exists(pathDebug))
         QDesktopServices::openUrl(QUrl::fromLocalFile(QString::fromStdString(pathDebug.string())));
 }
+#endif
 
 ToolTipToRichTextFilter::ToolTipToRichTextFilter(int size_threshold, QObject *parent) :
     QObject(parent), size_threshold(size_threshold)

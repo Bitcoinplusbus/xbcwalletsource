@@ -35,8 +35,10 @@ private slots:
     void on_tabWidget_currentChanged(int index);
     /** open the debug.log from the current datadir */
     void on_openDebugLogfileButton_clicked();
+#ifdef USE_TOR
     /** display messagebox with program parameters (same as bitcoin-qt --help) */
     void on_openTorLogfileButton_clicked();
+#endif
     /** display Tor log file */
     void on_showCLOptionsButton_clicked();
 

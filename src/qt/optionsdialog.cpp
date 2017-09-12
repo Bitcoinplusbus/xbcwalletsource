@@ -52,13 +52,15 @@ OptionsDialog::OptionsDialog(QWidget *parent) :
 
     ui->proxyIp->installEventFilter(this);
 
-    if (fTorEnabled == 1 ) {
+#ifdef USE_TOR
+    if (fTorEnabled == true) {
         ui->connectSocks->setEnabled(false);
         ui->proxyIp->setEnabled(false);
         ui->proxyPort->setEnabled(false);
         ui->socksVersion->setEnabled(false);
         ui->connectTorProxy->setChecked(true);
     }
+#endif
 
     /* Window elements init */
 #ifdef Q_OS_MAC
