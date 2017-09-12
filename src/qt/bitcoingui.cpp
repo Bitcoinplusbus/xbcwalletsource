@@ -1005,12 +1005,18 @@ void BitcoinGUI::encryptWallet(bool status)
 
 void BitcoinGUI::backupWallet()
 {
-    QString saveDir = QDesktopServices::storageLocation(QDesktopServices::DocumentsLocation);
-    QString filename = QFileDialog::getSaveFileName(this, tr("Backup Wallet"), saveDir, tr("Wallet Data (*.dat)"));
-    if(!filename.isEmpty()) {
-        if(!walletModel->backupWallet(filename)) {
-            QMessageBox::warning(this, tr("Backup Failed"), tr("There was an error trying to save the wallet data to the new location."));
+    QString filename = GUIUtil::getSaveFileName(this,
+        tr("Backup Wallet"), QString(),
+        tr("Wallet Data (*.dat)"), NULL);
+
+    if (filename.isEmpty())
+        return;
+
+    if (!walletModel->backupWallet(filename)) {
+        uiInterface.ThreadSafeMessageBox("Backup Failed: There was an error trying to save the wallet data", "BitcoinPlus", CClientUIInterface::MSG_ERROR);
         }
+    else {
+        uiInterface.ThreadSafeMessageBox("Backup Failed: There was an error trying to save the wallet data", "BitcoinPlus", CClientUIInterface::MSG_INFORMATION);
     }
 }
 
