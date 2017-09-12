@@ -136,8 +136,9 @@ bool CWallet::Unlock(const SecureString& strWalletPassphrase)
                 return false;
             break;
         }
-
+#ifdef USE_SMESSAGE
         SecureMsgWalletUnlocked();
+#endif
         return true;
     }
     return false;
@@ -1916,7 +1917,9 @@ bool CWallet::SetAddressBookName(const CTxDestination& address, const string& st
     if (fOwned)
     {
         const CBitcoinAddress& caddress = address;
+#ifdef USE_SMESSAGE
         SecureMsgWalletKeyChanged(caddress.ToString(), strName, nMode);
+#endif
     }
     NotifyAddressBookChanged(this, address, strName, fOwned, nMode);
     
@@ -1938,7 +1941,9 @@ bool CWallet::DelAddressBookName(const CTxDestination& address)
     if (fOwned)
     {
         const CBitcoinAddress& caddress = address;
+#ifdef USE_SMESSAGE
         SecureMsgWalletKeyChanged(caddress.ToString(), sName, CT_DELETED);
+#endif
     }
     NotifyAddressBookChanged(this, address, "", fOwned, CT_DELETED);
 

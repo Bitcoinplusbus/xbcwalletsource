@@ -973,9 +973,9 @@ bool AppInit2()
            addrman.size(), GetTimeMillis() - nStart);
 		   
 	// ********************************************************* Step 10.1: startup secure messaging
-    
+#ifdef USE_SMESSAGE
     SecureMsgStart(fNoSmsg, GetBoolArg("-smsgscanchain"));
-
+#endif
     // ********************************************************* Step 11: start node
 
     if (!CheckDiskSpace())

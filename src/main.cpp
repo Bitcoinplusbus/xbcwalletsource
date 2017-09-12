@@ -3415,8 +3415,10 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         if (ProcessBlock(pfrom, &block))
             mapAlreadyAskedFor.erase(inv);
         if (block.nDoS) pfrom->Misbehaving(block.nDoS);
+#ifdef USE_SMESSAGE
 		if (fSecMsgEnabled)
             SecureMsgScanBlock(block);
+#endif
     }
 
 
@@ -3546,7 +3548,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
             }
         }
     }
-
+#ifdef USE_SMESSAGE
 
     else
     {
@@ -3555,7 +3557,7 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
         
         // Ignore unknown commands for extensibility
     }
-
+#endif
 
     // Update the last seen time for this node's address
     if (pfrom->fNetworkNode)
@@ -3843,10 +3845,10 @@ bool SendMessages(CNode* pto, bool fSendTrickle)
         }
         if (!vGetData.empty())
             pto->PushMessage("getdata", vGetData);
-			
+#ifdef USE_SMESSAGE
 		if (fSecMsgEnabled)
             SecureMsgSendData(pto, fSendTrickle);
-
+#endif
     }
     return true;
 }

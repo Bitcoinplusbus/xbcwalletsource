@@ -8,20 +8,22 @@
 #include "transactiontablemodel.h"
 #include "addressbookpage.h"
 #include "sendcoinsdialog.h"
-#include "sendmessagesdialog.h"
 #include "signverifymessagedialog.h"
 #include "optionsdialog.h"
 #include "aboutdialog.h"
 #include "clientmodel.h"
 #include "walletmodel.h"
+#ifdef USE_SMESSAGE
 #include "messagemodel.h"
+#include "messagepage.h"
+#include "sendmessagesdialog.h"
+#endif
 #include "editaddressdialog.h"
 #include "optionsmodel.h"
 #include "transactiondescdialog.h"
 #include "addresstablemodel.h"
 #include "transactionview.h"
 #include "overviewpage.h"
-#include "messagepage.h"
 #include "bitcoinunits.h"
 #include "guiconstants.h"
 #include "askpassphrasedialog.h"
@@ -83,7 +85,9 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     QMainWindow(parent),
     clientModel(0),
     walletModel(0),
+#ifdef USE_SMESSAGE
     messageModel(0),
+#endif
     encryptWalletAction(0),
     changePassphraseAction(0),
     unlockWalletAction(0),
@@ -147,7 +151,9 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
 
     // Create tabs
     overviewPage = new OverviewPage();
+#ifdef USE_SMESSAGE
 	messagePage   = new MessagePage(this);
+#endif
     transactionsPage = new QWidget(this);
     QVBoxLayout *vbox = new QVBoxLayout();
     transactionView = new TransactionView(this);
@@ -163,8 +169,10 @@ BitcoinGUI::BitcoinGUI(QWidget *parent):
     signVerifyMessageDialog = new SignVerifyMessageDialog(this);
 
     centralWidget = new QStackedWidget(this);
-    centralWidget->addWidget(overviewPage);;	
+    centralWidget->addWidget(overviewPage);
+#ifdef USE_SMESSAGE
 	centralWidget->addWidget(messagePage);
+#endif
     centralWidget->addWidget(transactionsPage);
     centralWidget->addWidget(addressBookPage);
     centralWidget->addWidget(receiveCoinsPage);
@@ -267,12 +275,14 @@ void BitcoinGUI::createActions()
     overviewAction->setCheckable(true);
     overviewAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_1));
     tabGroup->addAction(overviewAction);
-	
+
+#ifdef USE_SMESSAGE
 	messageAction = new QAction(QIcon(":/icons/messaging"), tr("&Messages"), this);
     messageAction->setToolTip(tr("View and Send Encrypted messages"));
     messageAction->setCheckable(true);
     messageAction->setShortcut(QKeySequence(Qt::ALT + Qt::Key_7));
     tabGroup->addAction(messageAction);
+#endif
 
     sendCoinsAction = new QAction(QIcon(":/icons/send"), tr("&Send coins"), this);
     sendCoinsAction->setToolTip(tr("Send coins to a bitcoinplus address"));
@@ -308,9 +318,10 @@ void BitcoinGUI::createActions()
     connect(historyAction, SIGNAL(triggered()), this, SLOT(gotoHistoryPage()));
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(addressBookAction, SIGNAL(triggered()), this, SLOT(gotoAddressBookPage()));
+#ifdef USE_SMESSAGE
 	connect(messageAction, SIGNAL(triggered()), this, SLOT(showNormalIfMinimized()));
     connect(messageAction, SIGNAL(triggered()), this, SLOT(gotoMessagePage()));
-
+#endif
     quitAction = new QAction(QIcon(":/icons/quit"), tr("E&xit"), this);
     quitAction->setToolTip(tr("Quit application"));
     quitAction->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_Q));
@@ -410,7 +421,9 @@ void BitcoinGUI::createToolBars(QToolBar* toolbar)
     toolbar->addAction(receiveCoinsAction);
     toolbar->addAction(historyAction);
     toolbar->addAction(addressBookAction);
+#ifdef USE_SMESSAGE
     toolbar->addAction(messageAction);
+#endif
     toolbar->addAction(exportAction);
 
 }
@@ -487,6 +500,7 @@ void BitcoinGUI::setWalletModel(WalletModel *walletModel)
     }
 }
 
+#ifdef USE_SMESSAGE
 void BitcoinGUI::setMessageModel(MessageModel *messageModel)
 {
     this->messageModel = messageModel;
@@ -503,6 +517,7 @@ void BitcoinGUI::setMessageModel(MessageModel *messageModel)
                 this, SLOT(incomingMessage(QModelIndex,int,int)));
     }
 }
+#endif
 
 void BitcoinGUI::createTrayIcon()
 {
@@ -791,6 +806,7 @@ void BitcoinGUI::incomingTransaction(const QModelIndex & parent, int start, int 
     }
 }
 
+#ifdef USE_SMESSAGE
 void BitcoinGUI::incomingMessage(const QModelIndex & parent, int start, int end)
 {
     if(!messageModel)
@@ -819,6 +835,7 @@ void BitcoinGUI::incomingMessage(const QModelIndex & parent, int start, int end)
                               .arg(messageText));
     };
 }
+#endif
 
 void BitcoinGUI::gotoOverviewPage()
 {
@@ -829,6 +846,7 @@ void BitcoinGUI::gotoOverviewPage()
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
 }
 
+#ifdef USE_SMESSAGE
 void BitcoinGUI::gotoMessagePage()
 {
     messageAction->setChecked(true);
@@ -838,6 +856,7 @@ void BitcoinGUI::gotoMessagePage()
     disconnect(exportAction, SIGNAL(triggered()), 0, 0);
     connect(exportAction, SIGNAL(triggered()), messagePage, SLOT(exportClicked()));
 }
+#endif
 
 void BitcoinGUI::gotoHistoryPage()
 {

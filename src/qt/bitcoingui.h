@@ -7,10 +7,14 @@
 class TransactionTableModel;
 class ClientModel;
 class WalletModel;
+#ifdef USE_SMESSAGE
 class MessageModel;
+#endif
 class TransactionView;
 class OverviewPage;
+#ifdef USE_SMESSAGE
 class MessagePage;
+#endif
 class AddressBookPage;
 class SendCoinsDialog;
 class SignVerifyMessageDialog;
@@ -52,7 +56,9 @@ public:
         The message model represents encryption message database, and offers access to the list of messages, address book and sending
         functionality.
     */
+#ifdef USE_SMESSAGE
 	void setMessageModel(MessageModel *messageModel);
+#endif
 
 protected:
     void changeEvent(QEvent *e);
@@ -65,8 +71,10 @@ private:
     WalletModel *walletModel;
 
     QStackedWidget *centralWidget;
+#ifdef USE_SMESSAGE
 	MessageModel *messageModel;
 	MessagePage *messagePage;
+#endif
     OverviewPage *overviewPage;
     QWidget *transactionsPage;
     AddressBookPage *addressBookPage;
@@ -84,7 +92,9 @@ private:
 
     QMenuBar *appMenuBar;
     QAction *overviewAction;
+#ifdef USE_SMESSAGE
 	QAction *messageAction;
+#endif
     QAction *historyAction;
     QAction *quitAction;
     QAction *sendCoinsAction;
@@ -149,7 +159,9 @@ private slots:
     /** Switch to overview (home) page */
     void gotoOverviewPage();
 	/** Switch to message page */
+#ifdef USE_SMESSAGE
     void gotoMessagePage();
+#endif
     /** Switch to history (transactions) page */
     void gotoHistoryPage();
     /** Switch to address book page */
@@ -177,13 +189,13 @@ private slots:
         The new items are those between start and end inclusive, under the given parent item.
     */
     void incomingTransaction(const QModelIndex & parent, int start, int end);
-
+#ifdef USE_SMESSAGE
     /** Show incoming message notification for new messages.
 
         The new items are those between start and end inclusive, under the given parent item.
     */
     void incomingMessage(const QModelIndex & parent, int start, int end);
-	
+#endif
     /** Encrypt the wallet */
     void encryptWallet(bool status);
     /** Backup the wallet */
