@@ -3548,8 +3548,8 @@ bool static ProcessMessage(CNode* pfrom, string strCommand, CDataStream& vRecv)
             }
         }
     }
-#ifdef USE_SMESSAGE
 
+#ifdef USE_SMESSAGE
     else
     {
         if (fSecMsgEnabled)
