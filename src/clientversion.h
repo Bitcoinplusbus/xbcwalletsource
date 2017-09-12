@@ -1,6 +1,10 @@
 #ifndef CLIENTVERSION_H
 #define CLIENTVERSION_H
 
+#if defined(HAVE_CONFIG_H)
+#include "bitcoin-config.h"
+#else
+
 //
 // client versioning
 //
