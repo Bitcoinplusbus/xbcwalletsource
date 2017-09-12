@@ -1,11 +1,11 @@
-Name "BitcoinPlus Core"
+Name "@PACKAGE_NAME@"
 
 RequestExecutionLevel highest
 SetCompressor /SOLID lzma
 
 # General Symbol Definitions
 !define REGKEY "SOFTWARE\$(^Name)"
-!define VERSION 2.6.0.0
+!define VERSION @CLIENT_VERSION_MAJOR@.@CLIENT_VERSION_MINOR@.@CLIENT_VERSION_REVISION@
 !define COMPANY "BitcoinPlus Core project"
 !define URL https://www.bitcoinplus.org/
 
@@ -19,7 +19,7 @@ SetCompressor /SOLID lzma
 !define MUI_STARTMENUPAGE_REGISTRY_ROOT HKLM
 !define MUI_STARTMENUPAGE_REGISTRY_KEY ${REGKEY}
 !define MUI_STARTMENUPAGE_REGISTRY_VALUENAME StartMenuGroup
-!define MUI_STARTMENUPAGE_DEFAULTFOLDER "BitcoinPlus Core"
+!define MUI_STARTMENUPAGE_DEFAULTFOLDER "@PACKAGE_NAME@"
 !define MUI_FINISHPAGE_RUN $INSTDIR\bitcoinplus-qt.exe
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
 !define MUI_UNWELCOMEFINISHPAGE_BITMAP "pixmaps/nsis-wizard.bmp"
@@ -28,7 +28,7 @@ SetCompressor /SOLID lzma
 # Included files
 !include Sections.nsh
 !include MUI2.nsh
-!if "32" == "64"
+!if "@WINDOWS_BITS@" == "64"
 !include x64.nsh
 !endif
 
@@ -49,7 +49,7 @@ Var StartMenuGroup
 
 # Installer attributes
 OutFile ./bitcoinplus-${VERSION}-setup.exe
-!if "32" == "64"
+!if "@WINDOWS_BITS@" == "64"
 InstallDir "$PROGRAMFILES64\BitcoinPlus Coin"
 !else
 InstallDir "$PROGRAMFILES\BitcoinPlus Coin"
@@ -58,7 +58,7 @@ CRCCheck on
 XPStyle on
 BrandingText " "
 ShowInstDetails show
-VIProductVersion ${VERSION}.0
+VIProductVersion ${VERSION}.@CLIENT_VERSION_BUILD@
 VIAddVersionKey ProductName "BitcoinPlus Core"
 VIAddVersionKey ProductVersion "${VERSION}"
 VIAddVersionKey CompanyName "${COMPANY}"
@@ -151,7 +151,7 @@ SectionEnd
 # Installer functions
 Function .onInit
     InitPluginsDir
-!if "32" == "64"
+!if "@WINDOWS_BITS@" == "64"
     ${If} ${RunningX64}
       ; disable registry redirection (enable access to 64-bit portion of registry)
       SetRegView 64
