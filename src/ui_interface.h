@@ -59,7 +59,10 @@ public:
         MORE                  = 0x00010000,
         SETUP                 = 0x00020000,
         // Force blocking, modal message box dialog (not just OS notification)
-        MODAL                 = 0x00040000
+        MODAL                 = 0x00040000,
+
+        MSG_INFORMATION = 0,
+        MSG_ERROR = ((1U << 1) | 0x00000400U | 0x10000000U)
     };
 
     /** Show message box. */
