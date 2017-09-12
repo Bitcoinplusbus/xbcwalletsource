@@ -48,6 +48,7 @@ public:
         bool confirmed = index.data(TransactionTableModel::ConfirmedRole).toBool();
         QVariant value = index.data(Qt::ForegroundRole);
         QColor foreground = option.palette.color(QPalette::Text);
+#if QT_VERSION < 0x050000
         if(qVariantCanConvert<QColor>(value))
 #else
         if (value.canConvert(QMetaType::QColor))
