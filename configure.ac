@@ -73,7 +73,7 @@ AC_ARG_WITH([tor],
   [use_tor=no])
 
 AC_ARG_WITH([smessage],
-  [AS_HELP_STRING([--with-tor],
+  [AS_HELP_STRING([--with-smessage],
   [enable native Encrypted Message support (default is no)])],
   [use_smessage=$withval],
   [use_smessage=no])
