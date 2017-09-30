@@ -10,11 +10,12 @@
 #include "tor/anonymize.h"
 #endif
 
+class boost::thread_group;
 extern CWallet* pwalletMain;
 extern std::string strWalletFileName;
 void StartShutdown();
 void Shutdown(void* parg);
-bool AppInit2();
+bool AppInit2(boost::thread_group& threadGroup);
 std::string HelpMessage();
 
 #endif

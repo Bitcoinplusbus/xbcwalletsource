@@ -16,6 +16,8 @@
 #endif
 
 #include <map>
+#include <list>
+#include <utility>
 #include <vector>
 #include <string>
 
@@ -656,4 +658,3 @@ inline uint32_t ByteReverse(uint32_t value)
 }
 
 #endif
-
